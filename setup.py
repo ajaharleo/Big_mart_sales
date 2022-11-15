@@ -5,9 +5,9 @@ with open("README.md", "r", encoding="utf-8") as f:
 
 __version__ = "0.0.0"
 
-REPO_NAME = "Cement-Price-Prediction"
+REPO_NAME = "Big_mart_sales "
 AUTHOR_USER_NAME = "ajaharleo"
-SRC_REPO = "CementStrength"
+SRC_REPO = "BigMartSales"
 AUTHOR_EMAIL = "ajaharaj10518@outlook.com"
 
 setuptools.setup(
@@ -15,7 +15,7 @@ setuptools.setup(
     version=__version__,
     author=AUTHOR_USER_NAME,
     author_email=AUTHOR_EMAIL,
-    description="A prediction app to predict strength of cement blocks",
+    description="A prediction app to predict sales of BigMart products",
     long_description=long_description,
     long_description_content="text/markdown",
     url=f"https://github.com/{AUTHOR_USER_NAME}/{REPO_NAME}",
