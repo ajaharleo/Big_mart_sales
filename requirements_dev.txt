@@ -1,5 +1,6 @@
 ensure
 flask
+gunicorn
 joblib
 notebook
 numpy

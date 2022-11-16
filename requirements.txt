@@ -1,4 +1,11 @@
+ensure
+flask
+gunicorn
+joblib
 notebook
 numpy
 pandas
+pyaml
+python-box
+xgboost
 -e .

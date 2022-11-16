@@ -1,9 +1,21 @@
 import setuptools
+from typing import List
 
 with open("README.md", "r", encoding="utf-8") as f:
     long_description = f.read()
 
 __version__ = "0.0.0"
+
+REQUIREMENTS_FILENAME = 'requirements.txt'
+
+
+def get_requirements_list()->List[str]:
+    """
+    This function is going to return list of requirements present in requirements.txt file
+    returns a list of all library names needed to be installed to run the app.
+    """
+    with open(REQUIREMENTS_FILENAME, 'r') as requirements_file:
+        return requirements_file.readlines().remove('-e .')
 
 REPO_NAME = "Big_mart_sales "
 AUTHOR_USER_NAME = "ajaharleo"
@@ -24,4 +36,5 @@ setuptools.setup(
     },
     package_dir={"": "src"},
     packages=setuptools.find_packages(where="src")
+    install_requires = get_requirements_list()
 )

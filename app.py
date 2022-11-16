@@ -8,4 +8,4 @@ def predict():
     return 'Testing CI/CD pipeline'
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
