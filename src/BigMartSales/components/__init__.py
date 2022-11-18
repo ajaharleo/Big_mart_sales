@@ -1,0 +1,1 @@
+from BigMartSales.components.data_ingestion import DataIngestion

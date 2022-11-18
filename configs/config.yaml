@@ -1,0 +1,11 @@
+training_pipeline_config:
+  pipeline_name: sales
+  artifact_dir: artifact
+
+data_ingestion_config:
+  dataset_download_url: https://github.com/ajaharleo/kaggle_datasets/blob/main/Big_mart_sales.zip?raw=true
+  raw_data_dir: raw_data
+  zip_download_dir: zip_data
+  ingested_dir: ingested_data
+  ingested_train_dir: train
+  ingested_test_dir: test

@@ -2,10 +2,15 @@ ensure
 flask
 gunicorn
 joblib
+kneed
 notebook
 numpy
 pandas
+pathlib
 pyaml
 python-box
+requests
+seaborn
+scikit-learn
 xgboost
 -e .
