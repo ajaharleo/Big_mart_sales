@@ -8,7 +8,6 @@ __version__ = "0.0.0"
 
 REQUIREMENTS_FILENAME = 'requirements.txt'
 
-
 def get_requirements_list()->List[str]:
     """
     This function is going to return list of requirements present in requirements.txt file
