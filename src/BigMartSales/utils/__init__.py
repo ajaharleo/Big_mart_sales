@@ -3,6 +3,7 @@ from BigMartSales.constants import *
 from pathlib import Path
 import numpy as np
 import dill
+import pandas as pd
 
 @ensure_annotations
 def save_numpy_array_data(file_path: Path, array: np.ndarray):
@@ -44,3 +45,33 @@ def load_object(file_path:Path):
     """
     with open(file_path, "rb") as file_obj:
         return dill.load(file_obj)
+
+@ensure_annotations
+def write_yaml(file_path:Path,data:dict=None):
+    """
+    Create yaml file 
+    file_path: str
+    data: dict
+    """
+    try:
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+        with open(file_path,"w") as yaml_file:
+            if data is not None:
+                yaml.dump(data,yaml_file)
+    except Exception as e:
+        logger.exception(e)
+
+@ensure_annotations
+def load_data(file_path:Path, schema_file_path:Path)-> pd.DataFrame:
+    schema = read_yaml(schema_file_path)
+    columns = schema[DATASET_SCHEMA_COLUMNS_KEY]
+    df = pd.read_csv(file_path)
+    error_message = ""
+    for column in df.columns:
+        if column in list(columns.keys()):
+            df[column].astype(columns[column])
+        else:
+            error_message = f"{error_message} \nColumn: [{column}] is not in the schema."
+    if len(error_message) > 0:
+        raise Exception(error_message)
+    return df
