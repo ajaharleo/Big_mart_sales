@@ -2,7 +2,7 @@ from BigMartSales import logger
 import os,sys
 from BigMartSales.constants import *
 from BigMartSales.utils import *
-from BigMartSales.entity import DataIngestionConfig,TrainingPipelineConfig,DataValidationConfig,DataTransformationConfig,ModelTrainerConfig,ModelEvaluationConfig
+from BigMartSales.entity import DataIngestionConfig,TrainingPipelineConfig,DataValidationConfig,DataTransformationConfig,ModelTrainerConfig,ModelEvaluationConfig,ModelPusherConfig
 from pathlib import Path
 
 
@@ -173,6 +173,21 @@ class Configuration:
             return response
         except Exception as e:
             logger.exception(e)
+
+    def get_model_pusher_config(self) -> ModelPusherConfig:
+        try:
+            time_stamp = f"{datetime.now().strftime('%Y%m%d%H%M%S')}"
+            model_pusher_config_info = self.config_info[MODEL_PUSHER_CONFIG_KEY]
+            export_dir_path = os.path.join(ROOT_DIR, model_pusher_config_info[MODEL_PUSHER_MODEL_EXPORT_DIR_KEY],
+                                           time_stamp)
+
+            model_pusher_config = ModelPusherConfig(export_dir_path=export_dir_path)
+            logger.info(f"Model pusher config {model_pusher_config}")
+            return model_pusher_config
+
+        except Exception as e:
+            logger.exception(e)
+
     def get_training_pipeline_config(self) -> TrainingPipelineConfig:
         try:
             training_pipeline_config = self.config_info[TRAINING_PIPELINE_CONFIG_KEY]
