@@ -27,4 +27,7 @@ data_transformation_config:
   transformed_test_file: test_transformed
   preprocessed_files: preprocessed_files
 
-  
+model_trainer_config:
+  trained_model_dir: trained_model
+  model_file_name: model.pkl
+  base_accuracy: 0.6

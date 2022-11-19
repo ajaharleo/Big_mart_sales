@@ -2,7 +2,7 @@ from BigMartSales import logger
 import os,sys
 from BigMartSales.constants import *
 from BigMartSales.utils import *
-from BigMartSales.entity import DataIngestionConfig,TrainingPipelineConfig,DataValidationConfig,DataTransformationConfig
+from BigMartSales.entity import DataIngestionConfig,TrainingPipelineConfig,DataValidationConfig,DataTransformationConfig,ModelTrainerConfig
 from pathlib import Path
 
 
@@ -29,34 +29,29 @@ class Configuration:
             dataset_download_url = data_ingestion_info[DATA_INGESTION_DOWNLOAD_URL_KEY]
 
             zip_download_dir = os.path.join(data_ingestion_artifact_dir,
-                                        data_ingestion_info[DATA_INGESTION_ZIP_DOWNLOAD_DIR_KEY]
-                                    )
+                                        data_ingestion_info[DATA_INGESTION_ZIP_DOWNLOAD_DIR_KEY])
              
             raw_data_dir = os.path.join(data_ingestion_artifact_dir,
-                                        data_ingestion_info[DATA_INGESTION_RAW_DATA_DIR_KEY]
-                                    )
+                                        data_ingestion_info[DATA_INGESTION_RAW_DATA_DIR_KEY])
 
             ingested_dir = os.path.join(data_ingestion_artifact_dir,
                                         data_ingestion_info[DATA_INGESTION_INGESTED_DIR_NAME_KEY])
 
             ingested_train_dir = os.path.join(ingested_dir,
-                                        data_ingestion_info[DATA_INGESTION_TRAIN_DIR_KEY]
-                                    )
+                                        data_ingestion_info[DATA_INGESTION_TRAIN_DIR_KEY])
 
             ingested_test_dir = os.path.join(ingested_dir,
-                                        data_ingestion_info[DATA_INGESTION_TEST_DIR_KEY]
-                                    )
+                                        data_ingestion_info[DATA_INGESTION_TEST_DIR_KEY])
 
             
                                     
             data_ingestion_config = DataIngestionConfig(
-                dataset_download_url = dataset_download_url,
-                zip_download_dir = zip_download_dir,
-                raw_data_dir = raw_data_dir,
-                ingested_dir = ingested_dir,
-                ingested_train_dir = ingested_train_dir,
-                ingested_test_dir = ingested_test_dir
-            ) 
+                                            dataset_download_url = dataset_download_url,
+                                            zip_download_dir = zip_download_dir,
+                                            raw_data_dir = raw_data_dir,
+                                            ingested_dir = ingested_dir,
+                                            ingested_train_dir = ingested_train_dir,
+                                            ingested_test_dir = ingested_test_dir) 
             logger.info(f"DataIngestionConfig: {data_ingestion_config}")
             return data_ingestion_config
 
@@ -126,16 +121,39 @@ class Configuration:
                                                         data_transformation_config[DATA_TRANSFORMATION_TEST_FILE_NAME_KEY])#
 
             data_transformation_config = DataTransformationConfig(
-                transformed_test_dir = transformed_test_dir,
-                transformed_train_dir = transformed_train_dir,
-                preprocessed_object_file_path = preprocessed_object_file_path,
-                transformed_test_file= transformed_test_file,
-                transformed_train_file= transformed_train_file
-            )
-
+                                                            transformed_test_dir = transformed_test_dir,
+                                                            transformed_train_dir = transformed_train_dir,
+                                                            preprocessed_object_file_path = preprocessed_object_file_path,
+                                                            transformed_test_file= transformed_test_file,
+                                                            transformed_train_file= transformed_train_file)
 
             logger.info(f"DataTransformationConfig: {data_transformation_config}")
             return data_transformation_config
+        except Exception as e:
+            logger.exception(e)
+
+    def get_model_trainer_config(self) -> ModelTrainerConfig:
+        try:
+            artifact_dir = self.training_pipeline_config.artifact_dir
+
+            model_trainer_artifact_dir=os.path.join(
+                                                artifact_dir,
+                                                MODEL_TRAINER_ARTIFACT_DIR,
+                                                self.current_time_stamp)
+            model_trainer_config_info = self.config_info[MODEL_TRAINER_CONFIG_KEY]
+            trained_model_file_path = os.path.join(model_trainer_artifact_dir,
+                                        model_trainer_config_info[MODEL_TRAINER_TRAINED_MODEL_DIR_KEY],
+                                        model_trainer_config_info[MODEL_TRAINER_TRAINED_MODEL_FILE_NAME_KEY])
+
+            base_accuracy = model_trainer_config_info[MODEL_TRAINER_BASE_ACCURACY_KEY]
+
+            model_trainer_config = ModelTrainerConfig(
+                trained_model_file_path=trained_model_file_path,
+                base_accuracy=base_accuracy,
+               
+            )
+            logger.info(f"Model trainer config: {model_trainer_config}")
+            return model_trainer_config
         except Exception as e:
             logger.exception(e)
 
@@ -143,9 +161,8 @@ class Configuration:
         try:
             training_pipeline_config = self.config_info[TRAINING_PIPELINE_CONFIG_KEY]
             artifact_dir = os.path.join(ROOT_DIR,
-            training_pipeline_config[TRAINING_PIPELINE_NAME_KEY],
-            training_pipeline_config[TRAINING_PIPELINE_ARTIFACT_DIR_KEY]
-            )
+                                    training_pipeline_config[TRAINING_PIPELINE_NAME_KEY],
+                                    training_pipeline_config[TRAINING_PIPELINE_ARTIFACT_DIR_KEY])
 
             training_pipeline_config = TrainingPipelineConfig(artifact_dir=artifact_dir)
             logger.info(f"Training pipleine config: {training_pipeline_config}")
