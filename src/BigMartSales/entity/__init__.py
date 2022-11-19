@@ -1,2 +1,2 @@
-from BigMartSales.entity.config_entity import DataIngestionConfig,TrainingPipelineConfig,DataValidationConfig
-from BigMartSales.entity.artifact_entity import DataIngestionArtifact,DataValidationArtifact
+from BigMartSales.entity.config_entity import DataIngestionConfig,TrainingPipelineConfig,DataValidationConfig,DataTransformationConfig
+from BigMartSales.entity.artifact_entity import DataIngestionArtifact,DataValidationArtifact,DataTransformationArtifact
