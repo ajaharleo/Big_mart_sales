@@ -22,17 +22,15 @@ class DataTransformation:
                     data_transformation_config :DataTransformationConfig ):
         try:
             logger.info(f"{'>>'*30} Data Transformation Started {'<<'*30}")
-            self.data_validation_artifact = data_validation_artifact,
-            self.data_validation_artifact = self.data_validation_artifact[0]
-            self.data_ingestion_artifact = data_ingestion_artifact,
-            self.data_ingestion_artifact = self.data_ingestion_artifact[0]
+            self.data_validation_artifact = data_validation_artifact
+            self.data_ingestion_artifact = data_ingestion_artifact
             self.data_transformation_config = data_transformation_config
                         
         except Exception as e:
             logger.exception(e)
 
 
-    def get_dats_transformer_object(self):
+    def get_data_transformer_object(self):
         try:
             schema_file_path = Path(self.data_validation_artifact.schema_file_path)
 
@@ -107,7 +105,7 @@ class DataTransformation:
     def initiate_data_transformation(self) -> DataTransformationArtifact:
         try:
             
-            preprocessing_obj = self.get_dats_transformer_object()
+            preprocessing_obj = self.get_data_transformer_object()
             logger.info(f'Preprocessing object received')
 
             logger.info(f'obtaining Test and Train files and loading as pandas dataframe')
