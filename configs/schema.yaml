@@ -1,16 +1,17 @@
 columns:
-  Item_Identifier: category
-  Item_Weight: float
-  Item_Fat_Content: category
-  Item_Visibility: float
-  Item_Type: category
-  Item_MRP: float
-  Outlet_Establishment_Year: float
-  Outlet_Size: category
-  Outlet_Location_Type: category
-  Outlet_Type: category
-  Item_Outlet_Sales: float
-  Outlet_Identifier: category
+  Item_Identifier: object
+  Item_Weight: float64
+  Item_Fat_Content: object
+  Item_Visibility: float64
+  Item_Type: object
+  Item_MRP: float64
+  Outlet_Identifier: object
+  Outlet_Establishment_Year: int64
+  Outlet_Size: object
+  Outlet_Location_Type: object
+  Outlet_Type: object
+  Item_Outlet_Sales: float64
+  
 
 
 
@@ -35,22 +36,7 @@ categorical_columns:
 
 target_column: Item_Outlet_Sales
 
-domain_value:
-  Item_Identifier:
-    - FD
-    - DR
-    - NC 
-  
-  Item_Fat_Content:
-    - Low Fat
-    - Regular
-    - Non Edible
-  
-  Outlet_Size:
-    - Medium
-    - High
-    - Small
-  
+domain_value:  
   Outlet_Location_Type:
   - Tier 1
   - Tier 3
@@ -91,3 +77,19 @@ domain_value:
   - OUT046
   - OUT035
   - OUT019
+
+
+#  Item_Identifier:
+#    - FD
+#    - DR
+#    - NC 
+  
+#  Item_Fat_Content:
+#    - Low Fat
+#    - Regular
+#    - Non Edible
+  
+#  Outlet_Size:
+#    - Medium
+#    - High
+#    - Small'

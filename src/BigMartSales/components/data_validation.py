@@ -11,7 +11,7 @@ from evidently.model_profile import Profile
 from evidently.model_profile.sections import DataDriftProfileSection
 from evidently.dashboard import Dashboard
 from evidently.dashboard.tabs import DataDriftTab
-
+import numpy as np
 import pandas as pd 
 import json
 
@@ -20,12 +20,9 @@ class DataValidation:
     def __init__(self,data_ingestion_artifact:DataIngestionArtifact,data_validation_config:DataValidationConfig):
         try:
             logger.info(f"{'>>'*30} DataValidation started {'<<'*30} \n\n")
-            self.data_ingestion_artifact = data_ingestion_artifact,
-            self.data_ingestion_artifact = self.data_ingestion_artifact[0]
-            
-            self.data_validation_config = data_validation_config,
-            self.data_validation_config = self.data_validation_config[0]
-            
+            self.data_ingestion_artifact = data_ingestion_artifact
+            self.data_validation_config = data_validation_config
+            self.schema = read_yaml(Path(self.data_validation_config.schema_file_path))
             self.current_time_stamp = CURRENT_TIME_STAMP
 
         except Exception as e:
@@ -41,7 +38,7 @@ class DataValidation:
         except Exception as e:
             logger.exception(e)
 
-    def is_train_test_exist(self):
+    def do_train_test_files_exist(self):
         try:
             train_file_path = self.data_ingestion_artifact.train_file_path
             test_file_path = self.data_ingestion_artifact.test_file_path
@@ -62,21 +59,70 @@ class DataValidation:
 
             schema_file = read_yaml(Path(self.data_validation_config.schema_file_path))
             schema_dict = schema_file[DATA_VALIDATION_SCHEMA_KEY]
+            schema_domain_value = schema_file[SCHEMA_DOMAIN_VALUE_KEY]
             train_df , test_df = self.get_train_test_dataset()
-            
+            logger.info("Checking no. of columns in train and test dataset")
+            if not len(schema_dict) == len(train_df.columns) and len(schema_dict) == len(test_df.columns):
+                raise Exception("Train and/or test dataset does not have columns given in schema.")
+            else:
+                logger.info('No. of columns are same in train and test dataset and in schema file.')
+                logger.info("Checking columns names")
+                for column in schema_dict.keys():
+                    if column not in train_df.columns:
+                        raise Exception(f"Train dataset does not have column '{column}' mentioned in schema file")
+                    if column not in test_df.columns:
+                        raise Exception(f"Test dataset does not have column '{column}' mentioned in schema file")
+                else:
+                    logger.info(f"Train and test dataset have column required in schema file")
+            logger.info("Checking the datatypes of all columns")
+            for column in schema_dict.keys():
+                if train_df[column].dtype == schema_dict[column] and test_df[column].dtype == schema_dict[column]:
+                    logger.info(f"Column '{column}' has correct datatype in both train and test dataset.")
+                else:
+                    raise Exception(f"Column '{column}' does not have correct datatype in train and/or dataset.")
 
-            for column,data_type in schema_dict.items():
-                train_df[column].astype(data_type)
-                test_df[column].astype(data_type)
-
-
+            logger.info("Checking the domain values of categorical columns")
+            for column, cats in schema_domain_value.items():
+                logger.info(f"Checking domain values of column '{column}'")
+                for cat in train_df[column].unique():
+                    if cat not in schema_domain_value[column]:
+                        raise Exception(f"category '{cat}' is an unwanted value in column '{column}' of test dataset")
+                for cat in test_df[column].unique():
+                    if cat not in schema_domain_value[column]:
+                        raise Exception(f"category '{cat}' is an unwanted value in column '{column}' of test dataset")
+                else:
+                    logger.info(f"column '{column}' has all the required categories and no extra category")
+            logger.info("Data Validation Successful!")
             validations_status = True
 
-            logger.info("Data Validation done and statys : {Validations_status}")
+            logger.info(f"Data Validation done and stats : {validations_status}")
             return validations_status
         except Exception as e:
             logger.exception(e)
 
+    '''    def check_for_correlation(self):
+        try:
+            logger.info("Checking correlation between features")
+            df,_  = self.get_train_test_dataset()
+            target_column = self.schema[SCHEMA_TARGET_COLUMN_KEY][0]
+            droppable_columns = []
+            corr_matrix = df.corr(method='spearman',numeric_only=True)
+            for column in df.columns:
+                if np.abs(corr_matrix.loc[column,target_column]) < 0.1:
+                    logger.info(f"Column [{column}] has very less correlation with the target feature.")
+                    droppable_columns.append(column)
+                    df.drop(column, axis=1, inplace=True)
+            for i in corr_matrix.columns:
+                for j in corr_matrix.columns:
+                    if i!=j:
+                        if corr_matrix.loc[i,j] > 0.7:
+                            logger.info(f"Column [{i}[] and [{j}] has very high dependence on each other.")
+                            df.drop(i, axis=1, inplace=True)
+                            droppable_columns.append(column)
+            logger.info(f"Droppable columns: {droppable_columns}")
+            return droppable_columns
+        except Exception as e:
+            logger.exception(e)'''
 
     def get_and_save_data_drift_report(self):
         try:
@@ -96,13 +142,11 @@ class DataValidation:
 
             with open(report_file_path,'w') as report_file:
                 json.dump(report,report_file,indent=6)
-
-            
+        
             return report
 
         except Exception as e:
             logger.exception(e)
-
 
     def save_data_drift_report_page(self):
         try:
@@ -129,19 +173,15 @@ class DataValidation:
 
     def initiate_data_validation(self) -> DataValidationArtifact:
         try:
-            self.is_train_test_exist()
+            self.do_train_test_files_exist()
             is_validated = self.validation_dataset_schema()
             self.is_data_drif_found()
-
             data_validation_artificat = DataValidationArtifact(
                                          schema_file_path=self.data_validation_config.schema_file_path,
                                          report_file_path=self.data_validation_config.report_file_path,
                                          report_page_file_path=self.data_validation_config.report_page_file_path,
                                          is_validated= is_validated,
-                                         message=" data Validation Performed Successfully"
-            )
-
-
+                                         message=" data Validation Performed Successfully")
 
             logger.info(f'Data validation artifact : {data_validation_artificat}')
 

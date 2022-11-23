@@ -43,11 +43,14 @@ DATA_VALIDATION_ARTIFACT_DIR_NAME="data_validation"
 DATA_VALIDATION_REPORT_FILE_NAME_KEY = "report_file_name"
 DATA_VALIDATION_REPORT_PAGE_FILE_NAME_KEY = "report_page_file_name"
 DATA_VALIDATION_SCHEMA_KEY = 'columns'
+SCHEMA_NUMERICAL_COLUMNS_KEY = 'numerical_columns'
+SCHEMA_CATEGORICAL_COLUMNS_KEY = 'categorical_columns'
+SCHEMA_TARGET_COLUMN_KEY = 'target_column'
+SCHEMA_DOMAIN_VALUE_KEY = 'domain_value'
 
 # Data Transformation related variables
 DATA_TRANSFORMATION_ARTIFACT_DIR = "data_transformation"
 DATA_TRANSFORMATION_CONFIG_KEY = "data_transformation_config"
-DATA_TRANSFORMATION_ADD_BEDROOM_PER_ROOM_KEY = "add_bedroom_per_room"
 DATA_TRANSFORMATION_DIR_NAME_KEY = "transformed_dir"
 DATA_TRANSFORMATION_TRAIN_DIR_NAME_KEY = "transformed_train_dir"
 DATA_TRANSFORMATION_TEST_DIR_NAME_KEY = "transformed_test_dir"
@@ -84,3 +87,6 @@ MODEL_PATH_KEY = "model_path"
 # Model Pusher config key
 MODEL_PUSHER_CONFIG_KEY = "model_pusher_config"
 MODEL_PUSHER_MODEL_EXPORT_DIR_KEY = "model_export_dir"
+
+EXPERIMENT_DIR_NAME="experiment"
+EXPERIMENT_FILE_NAME="experiment.csv"
