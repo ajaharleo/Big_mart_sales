@@ -52,8 +52,6 @@ class ModelEvaluation:
             eval_file_path = Path(self.model_evaluation_config.model_evaluation_file_path)
             model_eval_content = read_yaml(eval_file_path)
             model_eval_content = dict() if model_eval_content is None else model_eval_content
-            
-            
             previous_best_model = None
             if BEST_MODEL_KEY in model_eval_content:
                 previous_best_model = model_eval_content[BEST_MODEL_KEY]

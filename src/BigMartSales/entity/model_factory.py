@@ -57,11 +57,16 @@ def evaluate_regression_model(model_list: list, X_train:np.ndarray, y_train:np.n
         for model in model_list:
             model_name = str(model)  #getting model name based on model object
             logger.info(f"{'>>'*30}Started evaluating model: [{type(model).__name__}] {'<<'*30}")
-            logger.info(f'{"-+-"*30} best_model parameter:{model.best_model} {"-+-"*30}  ')
-            #Getting prediction for training and testing dataset
-            best_model = model.best_model
-            y_train_pred = best_model.predict(X_train)
-            y_test_pred = best_model.predict(X_test)
+            try:
+                logger.info(f'{"-+-"*30} best_model parameter:{model.best_model} {"-+-"*30}  ')
+                #Getting prediction for training and testing dataset
+                best_model = model.best_model
+                y_train_pred = best_model.predict(X_train)
+                y_test_pred = best_model.predict(X_test)
+            except:
+                best_model = model
+                y_train_pred = best_model.predict(X_train)
+                y_test_pred = best_model.predict(X_test)
 
             #Calculating r squared score on training and testing dataset
             train_acc = r2_score(y_train, y_train_pred)
