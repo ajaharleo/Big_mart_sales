@@ -4,11 +4,12 @@ from BigMartSales import logger
 from BigMartSales.entity import DataTransformationArtifact, ModelTrainerArtifact
 from BigMartSales.entity import ModelTrainerConfig
 from BigMartSales.utils import load_numpy_array_data,save_object,load_object
-from BigMartSales.entity import MetricInfoArtifact,evaluate_regression_model
+from BigMartSales.entity import MetricInfoArtifact,evaluate_regression_model,ModelFactory,GridSearchedBestModel
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import r2_score,mean_absolute_error
 import numpy as np
+from typing import List
 
 
 class salesEstimatorModel:
@@ -48,7 +49,7 @@ class ModelTrainer:
         except Exception as e:
             logger.exception(e)
 
-    def get_best_param_rf(self,x_train,y_train,x_test,y_test):
+    '''def get_best_param_rf(self,x_train,y_train,x_test,y_test):
         try:
             best_params={}
 
@@ -81,7 +82,7 @@ class ModelTrainer:
             r2=r2_score(y_test, y_pred)
             return model, r2
         except Exception as e:
-            logger.exception(e)
+            logger.exception(e)'''
 
     def initiate_model_trainer(self)->ModelTrainerArtifact:
         try:
@@ -96,33 +97,26 @@ class ModelTrainer:
             logger.info(f"Splitting training and testing input and target feature")
             x_train,y_train,x_test,y_test = train_array[:,:-1],train_array[:,-1],test_array[:,:-1],test_array[:,-1]
          
+            logger.info(f"Extracting model config file path")
+            model_config_file_path = Path(self.model_trainer_config.model_config_file_path)
+            logger.info(f"Initializing model factory class using above model config file: {model_config_file_path}")
+            model_factory = ModelFactory(model_config_path=model_config_file_path)
             base_accuracy = self.model_trainer_config.base_accuracy
             logger.info(f"Expected accuracy: {base_accuracy}")
+            logger.info(f"Initiating operation model selection")
+            best_model = model_factory.get_best_model(X=x_train,y=y_train,base_accuracy=base_accuracy)
+            logger.info(f"Extracting trained model list.")
+            grid_searched_best_model_list:List[GridSearchedBestModel]=model_factory.grid_searched_best_model_list
+            model_list = [model.best_model for model in grid_searched_best_model_list]
+            logger.info(f"Evaluating all trained model on training and testing dataset both")
 
-            ### ADding New Code 
-            rf_model , rf_r2 = self.get_best_param_rf(x_train=x_train,y_train=y_train,y_test=y_test,x_test=x_test)
-
-            if rf_r2  > base_accuracy:
-                best_model,model_name = rf_model  ,'RF Model '
-                logger.info (f'best Model is {model_name} with parameters {best_model} ')
-            else:
-                raise f"None of model has base accuracy more than {base_accuracy}" 
-            
-            logger.info(f"Best model found on training dataset: {best_model}")
-
-            best_model.fit( x_train,y_train)
-            y_pred=best_model.predict(x_test)
-            r2=r2_score(y_test, y_pred)
-
-            logger.info(f'Model Accuracy : {r2}')
-
-            ### ADding New Code
-
+            metric_info:MetricInfoArtifact = evaluate_regression_model(model_list=[best_model],X_train=x_train,
+                                                                        y_train=y_train,X_test=x_test,
+                                                                        y_test=y_test,base_accuracy=base_accuracy)
+            logger.info(f"Best found model on both training and testing dataset.")
             preprocessing_obj=  load_object(file_path=Path(self.data_transformation_artifact.preprocessed_object_file_path))
-            trained_model_file_path=Path(self.model_trainer_config.trained_model_file_path)
-            metric_info:MetricInfoArtifact = evaluate_regression_model(model_list=[best_model],X_train=x_train,y_train=y_train,X_test=x_test,y_test=y_test,base_accuracy=base_accuracy)
-
             model_object = metric_info.model_object 
+            trained_model_file_path=Path(self.model_trainer_config.trained_model_file_path)
 
             data_model = salesEstimatorModel(preprocessing_object=preprocessing_obj,trained_model_object=model_object)
             logger.info(f"Saving model at path: {trained_model_file_path}")
@@ -134,15 +128,11 @@ class ModelTrainer:
                                     test_rmse=metric_info.test_rmse,
                                     train_accuracy=metric_info.train_accuracy,
                                     test_accuracy=metric_info.test_accuracy,
-                                    model_accuracy=metric_info.model_accuracy
-            
-            )
-
-
+                                    model_accuracy=metric_info.model_accuracy)
             logger.info(f"Model Trainer Artifact: {model_trainer_artifact}")
             return model_trainer_artifact
         except Exception as e:
             logger.exception(e)
 
     def __del__(self):
-        logger.info(f"{'>>' * 30}Model trainer log completed.{'<<' * 30} ")
+        logger.info(f"{'>>' * 30}Model trainer log completed.{'<<' * 30} ") 
