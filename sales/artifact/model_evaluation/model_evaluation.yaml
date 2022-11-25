@@ -1,0 +1,5 @@
+best_model:
+  model_path: D:\iNeuron\ML_projects\Big_mart_sales\sales\artifact\model_trainer\2022-11-24-10-59-54\trained_model\model.pkl
+history:
+  2022-11-24-10-59-54:
+    model_path: D:\iNeuron\ML_projects\Big_mart_sales\sales\artifact\model_trainer\2022-11-24-10-59-54\trained_model\model.pkl
