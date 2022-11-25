@@ -13,7 +13,7 @@
 Deployment link: [https://big-mart-sales1.herokuapp.com/](https://big-mart-sales1.herokuapp.com/)
 
 
-<img src="images\Project1.png" alt="Project UI/UX" />
+<img src="images\projectUI.png" alt="Project UI/UX" />
 
 
 
@@ -56,3 +56,37 @@ Step by step overview of complete project implementation.
 4. Feature Selection 
     - Correlation method is used to check internal correlated features.
     - Used RandomForest Feature Importance to select important features  
+5. Model Building
+    - Trained data using various Machine Learning algorithams.
+    - Model Hyperparameter tuning done with GridSearchCV.
+    - Models Evaluated with R2 Score and RMSE score.
+6. Pipeline 
+    Sequence of data preprocessing components is called data pipeline. 
+    1. Data Ingestion 
+        - Download the data from source, extract it, split into train and test dataset and store in the destination
+    2. Data Validation 
+        - Validate data so noise data will not come in the piepline 
+    3. Data Transformation 
+        - Apply Feature Engineering , Feature Selction processes on data and store transformed data into required format/scale. 
+    4. Model Trainer 
+        - Training the Best model with tuned parameters.
+    5. Model Evaluation 
+        - Evaluation done by comparing model's accuracy with base accuracy and recent model. 
+    6. Model Pusher 
+        - If accuracy of trained model is higher than previous deployed model then push model into working.
+
+
+## Technologies Used
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Python-logo-notext.svg/800px-Python-logo-notext.svg.png" alt="Python" width="200"/>
+<img src="https://static.tildacdn.com/tild3536-6337-4235-a664-373965303839/evidently_ai_logo_fi.png" alt="evidently" width="350"/>
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Scikit_learn_logo_small.svg/1200px-Scikit_learn_logo_small.svg.png" alt="sklearn" width="350"/>
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Pandas_logo.svg/2560px-Pandas_logo.svg.png" alt="pandas" width="350"/>
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/NumPy_logo_2020.svg/2560px-NumPy_logo_2020.svg.png" alt="Numpy" width="350"/>
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Heroku_logo.svg/2560px-Heroku_logo.svg.png" alt="Heroku" width="350"/>
+<img src="https://www.docker.com/wp-content/uploads/2022/03/vertical-logo-monochromatic.png" alt="docker" width="350"/>
+<img src="https://www.parasoft.com/wp-content/uploads/2021/04/CICD_CICD.png" alt="CICD" width="350"/>
+
+=======
+# Item_sales_predictions
+Full Stack End to End Machine Learning Project with CI/CD Piepline
+Working Link : https://big-mart-sales1.herokuapp.com/ 
